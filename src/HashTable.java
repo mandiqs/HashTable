@@ -2,16 +2,13 @@ public abstract class HashTable {
     protected int capacity;
     protected int numCollisions;
     protected BucketList[] table;
-    protected int[] collisionsPerBucket;
 
     public HashTable(int capacity) {
         this.capacity = capacity;
         this.numCollisions = 0;
         this.table = new BucketList[capacity];
-        this.collisionsPerBucket = new int[capacity];
         for (int i = 0; i < capacity; i++) {
             table[i] = new BucketList();
-            collisionsPerBucket[i] = 0;
         }
     }
 
@@ -23,7 +20,6 @@ public abstract class HashTable {
         int idx = hashFunction(key);
         if (table[idx].size() > 0) {
             numCollisions++;
-            collisionsPerBucket[idx]++;
         }
         table[idx].add(key);
     }
@@ -48,8 +44,4 @@ public abstract class HashTable {
         return dist;
     }
 
-    // Retorna colisões de cada bucket
-    public int[] getCollisionsPerBucket() {
-        return collisionsPerBucket;
-    }
 }

@@ -70,16 +70,16 @@ public class HashTableProgram {
                         "Relatório: " + title +
                         ANSI_RESET
         );
+
         System.out.println("Número total de colisões: " + table.getNumCollisions());
         System.out.printf("Tempo total de inserção: %.3f ms%n", insertNs  / 1_000_000.0);
         System.out.printf("Tempo total de busca: %.3f ms%n", searchNs  / 1_000_000.0);
         System.out.println();
         System.out.printf("%-8s | %-8s | %-8s%n", "Posição", "Chaves", "Colisões");
 
-        int[] dist = table.getDistribution();
-        int[] col  = table.getCollisionsPerBucket();
-        for (int i = 0; i < dist.length; i++) {
-            System.out.printf("%-8d | %-8d | %-8d%n", i, dist[i], col[i]);
+        BucketList[] tabelaDados = table.table;
+        for (int i = 0; i < tabelaDados.length; i++) {
+            System.out.printf("%-8d | %-8d | %-8d%n", i, tabelaDados[i].size(), tabelaDados[i].size() - 1);
         }
     }
 }
