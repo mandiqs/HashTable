@@ -1,11 +1,9 @@
 public abstract class HashTable {
     protected int capacity;
-    protected int numCollisions;
     protected BucketList[] table;
 
     public HashTable(int capacity) {
         this.capacity = capacity;
-        this.numCollisions = 0;
         this.table = new BucketList[capacity];
         for (int i = 0; i < capacity; i++) {
             table[i] = new BucketList();
@@ -18,9 +16,6 @@ public abstract class HashTable {
     // Insere a chave, contando colisões se o bucket já tiver itens
     public void insert(String key) {
         int idx = hashFunction(key);
-        if (table[idx].size() > 0) {
-            numCollisions++;
-        }
         table[idx].add(key);
     }
 
@@ -32,7 +27,13 @@ public abstract class HashTable {
 
     // Retorna total de colisões
     public int getNumCollisions() {
-        return numCollisions;
+        int size = 0;
+        for (int i = 0; i < capacity; i++) {
+            if(table[i].size() > 0) {
+                size += table[i].size() - 1;
+            }
+        }
+        return size;
     }
 
     // Retorna distribuição de chaves por bucket
