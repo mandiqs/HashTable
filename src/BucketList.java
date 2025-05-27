@@ -33,7 +33,7 @@ public class BucketList { // Lista encadeada pra tratar colisões
         return false;
     }
 
-    public boolean Removes(String element) {
+    public boolean removes(String element) {
         Node curr = head;
         Node previous = null;
         while (curr != null) {

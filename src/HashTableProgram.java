@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Scanner;
 
 public class HashTableProgram {
 
@@ -81,17 +82,101 @@ public class HashTableProgram {
         System.out.printf("Tempo total de inserção: %.3f ms%n", insertNs  / 1_000_000.0);
         System.out.printf("Tempo total de busca: %.3f ms%n", searchNs  / 1_000_000.0);
         System.out.println();
-        System.out.printf("%-8s | %-8s | %-8s%n", "Posição", "Chaves", "Colisões");
+
+// Ask user for display preference
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Como deseja visualizar a tabela?");
+        System.out.println("1 - Resumo paginado (apenas totais por faixa)");
+        System.out.println("2 - Paginado detalhado (com detalhes de cada posição)");
+        System.out.println("3 - Tudo de uma vez");
+        System.out.print("Escolha (1, 2 ou 3): ");
+        int choice = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
 
         BucketList[] tabelaDados = table.table;
-        for (int i = 0; i < tabelaDados.length; i++) {
-            System.out.printf("%-8d | %-8d | %-8d%n", i, tabelaDados[i].size(), table.getNumCollisions(i));
+        int capacity = tabelaDados.length;
+
+        if (choice == 1 || choice == 2) {
+            // PAGINATED VIEW (Summary or Detailed)
+            int pageSize = capacity / 10; // 10% of capacity
+            int totalPages = (capacity + pageSize - 1) / pageSize; // Ceiling division
+
+            System.out.println("=== TABELA DE HASH - VISUALIZAÇÃO PAGINADA ===");
+            System.out.printf("Capacidade total: %d | Tamanho da página: %d | Total de páginas: %d%n%n",
+                    capacity, pageSize, totalPages);
+
+            // Always show summary of all pages
+            System.out.println("=== RESUMO DAS PÁGINAS ===");
+            System.out.printf("%-12s | %-10s | %-10s | %-10s%n", "Faixa", "Chaves", "Colisões", "Ocupação");
+            System.out.println("-------------|------------|------------|------------");
+
+            for (int page = 0; page < totalPages; page++) {
+                int startIndex = page * pageSize;
+                int endIndex = Math.min(startIndex + pageSize - 1, capacity - 1);
+
+                // Calculate summary for this page
+                int totalKeys = 0;
+                int totalCollisions = 0;
+                int occupiedBuckets = 0;
+
+                for (int i = startIndex; i <= endIndex; i++) {
+                    int bucketSize = tabelaDados[i].size();
+                    totalKeys += bucketSize;
+                    totalCollisions += table.getNumCollisions(i);
+                    if (bucketSize > 0) {
+                        occupiedBuckets++;
+                    }
+                }
+
+                int pageSize_actual = endIndex - startIndex + 1;
+                double occupationRate = (double) occupiedBuckets / pageSize_actual * 100;
+
+                System.out.printf("%-12s | %-10d | %-10d | %-9.1f%%%n",
+                        startIndex + "-" + endIndex,
+                        totalKeys,
+                        totalCollisions,
+                        occupationRate);
+            }
+
+            // Only show detailed breakdown if choice is 2
+            if (choice == 2) {
+                System.out.println("\n=== DETALHES POR PÁGINA ===");
+
+                for (int page = 0; page < totalPages; page++) {
+                    int startIndex = page * pageSize;
+                    int endIndex = Math.min(startIndex + pageSize - 1, capacity - 1);
+
+                    System.out.printf("\n=== PÁGINA %d (%d-%d) ===%n", page + 1, startIndex, endIndex);
+                    System.out.printf("%-8s | %-8s | %-8s%n", "Posição", "Chaves", "Colisões");
+                    System.out.println("---------|----------|----------");
+
+                    for (int i = startIndex; i <= endIndex; i++) {
+                        System.out.printf("%-8d | %-8d | %-8d%n", i, tabelaDados[i].size(), table.getNumCollisions(i));
+                    }
+
+                    // Pause between pages (except for the last page)
+                    if (page < totalPages - 1) {
+                        System.out.print("\nPressione Enter para continuar para a próxima página...");
+                        scanner.nextLine();
+                    }
+                }
+            }
+        } else {
+            // SHOW ALL AT ONCE
+            System.out.println("=== TABELA DE HASH - VISUALIZAÇÃO COMPLETA ===");
+            System.out.printf("%-8s | %-8s | %-8s%n", "Posição", "Chaves", "Colisões");
+            System.out.println("---------|----------|----------");
+
+            for (int i = 0; i < capacity; i++) {
+                System.out.printf("%-8d | %-8d | %-8d%n", i, tabelaDados[i].size(), table.getNumCollisions(i));
+            }
+            System.out.println();
         }
 
-        System.out.printf("\nFactor: %.3f", table.getFactor());
-        System.out.printf("\nChaves Preenchidas: " + table.filledBuckets + "\n");
+        System.out.printf("Factor: %.3f%n", table.getFactor());
+        System.out.printf("Chaves Preenchidas: %d%n", table.filledBuckets);
         System.out.println("Número total de colisões: " + table.getNumCollisions());
-        System.out.println("Capacidade: " + table.capacity + "\n");
+        System.out.println("Capacidade: " + table.capacity);
 
 
     }
