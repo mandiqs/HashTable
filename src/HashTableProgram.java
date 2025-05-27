@@ -21,7 +21,10 @@ public class HashTableProgram {
         // Mede desempenho FNV-1a
         long t0 = System.nanoTime();
         for (int i = 0; i < names.size(); i++) {
-            fnvTable.insert(names.get(i));
+            Boolean insert = fnvTable.insert(names.get(i));
+            if(!insert){
+                i = -1;
+            }
         }
         long t1 = System.nanoTime();
         for (int i = 0; i < names.size(); i++) {
@@ -34,7 +37,10 @@ public class HashTableProgram {
         // Mede desempenho SDBM
         t0 = System.nanoTime();
         for (int i = 0; i < names.size(); i++) {
-            sdbmTable.insert(names.get(i));
+            Boolean insert = sdbmTable.insert(names.get(i));
+            if(!insert){
+                i = -1;
+            }
         }
         t1 = System.nanoTime();
         for (int i = 0; i < names.size(); i++) {
@@ -79,7 +85,14 @@ public class HashTableProgram {
 
         BucketList[] tabelaDados = table.table;
         for (int i = 0; i < tabelaDados.length; i++) {
-            System.out.printf("%-8d | %-8d | %-8d%n", i, tabelaDados[i].size(), tabelaDados[i].size() - 1);
+            System.out.printf("%-8d | %-8d | %-8d%n", i, tabelaDados[i].size(), table.getNumCollisions(i));
         }
+
+        System.out.printf("\nFactor: %.3f", table.getFactor());
+        System.out.printf("\nChaves Preenchidas: " + table.filledBuckets + "\n");
+        System.out.println("Número total de colisões: " + table.getNumCollisions());
+        System.out.println("Capacidade: " + table.capacity + "\n");
+
+
     }
 }
