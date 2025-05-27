@@ -6,7 +6,7 @@ public abstract class HashTable {
 
     public HashTable(int capacity) {
         this.capacity = capacity;
-        this.factor = 0.98;
+        this.factor = 0.75;
         this.table = new BucketList[capacity];
         for (int i = 0; i < capacity; i++) {
             table[i] = new BucketList();
