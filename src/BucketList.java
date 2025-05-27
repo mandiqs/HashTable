@@ -33,6 +33,25 @@ public class BucketList { // Lista encadeada pra tratar colisões
         return false;
     }
 
+    public boolean Removes(String element) {
+        Node curr = head;
+        Node previous = null;
+        while (curr != null) {
+            if (curr.value.equals(element)) {
+                if(previous != null){
+                    previous.next = curr.next;
+                }
+                else {
+                    head = curr.next;
+                }
+                return true;
+            }
+            previous = curr;
+            curr = curr.next;
+        }
+        return false;
+    }
+
 
     public int size() {
         return size;

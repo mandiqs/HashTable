@@ -13,7 +13,6 @@ public abstract class HashTable {
         }
     }
 
-
     protected abstract int hashFunction(String key);
 
     // Insere a chave, contando colisões se o bucket já tiver itens
@@ -65,6 +64,17 @@ public abstract class HashTable {
 
     // Busca a chave no bucket
     public boolean search(String key) {
+        int idx = hashFunction(key);
+        return table[idx].contains(key);
+    }
+
+    // Busca a chave no bucket
+    public boolean Remove(String key) {
+        int idx = hashFunction(key);
+        return table[idx].removes(key);
+    }
+
+    public boolean searchWord(String key) {
         int idx = hashFunction(key);
         return table[idx].contains(key);
     }
